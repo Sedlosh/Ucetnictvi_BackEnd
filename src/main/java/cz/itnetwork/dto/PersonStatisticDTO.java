@@ -12,11 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PersonStatisticDTO {
 
-
     private Long personId;
-
     private String personName;
-
     private Long revenue;
 
 }

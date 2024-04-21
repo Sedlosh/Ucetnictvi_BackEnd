@@ -9,19 +9,12 @@ import java.util.List;
 
 public interface InvoiceService {
 
-
-
-    InvoiceDTO addInvoice (InvoiceDTO invoiceDTO);
-
-    ResponseEntity<Void> removeInvoice(long id);
-
-    List<InvoiceDTO> getAll(InvoiceFilter invoiceFilter);
-
-    InvoiceDTO getInvoiceById(long id);
-
-    InvoiceDTO editInvoice(Long invoiceId, InvoiceDTO invoiceDTO);
-
-    InvoiceStatisticDTO getInvoiceStatistics();
+    InvoiceDTO addInvoice (InvoiceDTO invoiceDTO); /* Přidá novou fakturu */
+    ResponseEntity<Void> removeInvoice(long id); /* Odstraní existující fakturu podle zadaného id */
+    List<InvoiceDTO> getAll(InvoiceFilter invoiceFilter); /* Vrátí seznam všech faktur podle zadaného filtru */
+    InvoiceDTO getInvoiceById(long id); /* Vrátí fakturu podle zadaného id */
+    InvoiceDTO editInvoice(Long invoiceId, InvoiceDTO invoiceDTO); /*Upraví existující fakturu podle zadaného id novými daty, které přijdou jako DTO*/
+    InvoiceStatisticDTO getInvoiceStatistics(); /*Vrátí statistiku faktur */
 
 
 

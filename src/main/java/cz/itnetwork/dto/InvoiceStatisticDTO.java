@@ -11,10 +11,9 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Component
 public class InvoiceStatisticDTO {
+
     private Long currentYearSum;
-
     private Long allTimeSum;
-
     private Long invoicesCount;
 
 

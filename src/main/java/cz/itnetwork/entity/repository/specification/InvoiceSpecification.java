@@ -18,6 +18,11 @@ public class InvoiceSpecification implements Specification<InvoiceEntity> {
 
     private final InvoiceFilter filter;
 
+    /*
+     * Slouží k vytvoření specifikace pro dotazy nad entitou InvoiceEntity na základě filtru.
+     * Filtr obsahuje parametry pro filtrování faktur podle prodejce, kupujícího, produktu, minimální a maximální ceny.
+     * Metoda toPredicate sestavuje dotaz na základě filtru a vytváří seznam podmínek pro dotazování.
+     */
     @Override
     public Predicate toPredicate(Root<InvoiceEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 
@@ -47,13 +52,6 @@ public class InvoiceSpecification implements Specification<InvoiceEntity> {
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
 
-/**
- * Třída InvoiceSpecification je implementací rozhraní Specification pro entitu InvoiceEntity.
- * Slouží k vytvoření specifikace pro dotazy nad entitou InvoiceEntity na základě filtru.
- * Filtr obsahuje parametry pro filtrování faktur podle prodejce, kupujícího, produktu, minimální a maximální ceny.
- * Metoda toPredicate sestavuje dotaz na základě filtru a vytváří seznam podmínek pro dotazování.
- * Vytváří se spojení s entitami PersonEntity pro získání informací o prodejci a kupujícím.
- */
 }
 
 

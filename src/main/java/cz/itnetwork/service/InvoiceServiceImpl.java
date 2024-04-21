@@ -31,6 +31,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     private PersonServiceImpl personServiceImpl;
 
+    /*
+    Vstupní data ve formátu DTO se převedou na entitu faktury.
+    Metoda najde objekt buyera a sellera z databáze podle zadaného ID, ty pak  společně s daty z DTO uloží do entity faktury.
+    Převede entitu na DTO.
+     */
     @Override
     public InvoiceDTO addInvoice(InvoiceDTO invoiceDTO) {
         InvoiceEntity entity = invoiceMapper.toEntity(invoiceDTO);
@@ -42,31 +47,26 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return invoiceMapper.toDTO(entity);
 
-        /**
-         * Převod na entitu: Nejprve se převede vstupní objekt InvoiceDTO na entitu InvoiceEntity pomocí mapperu invoiceMapper.toEntity(invoiceDTO). Tím se vytvoří nová instance InvoiceEntity s daty z InvoiceDTO.
-         *
-         * Hledání kupce: Poté se získá identifikátor kupce (buyerId) z invoiceDTO.getBuyer().getId(). Pomocí tohoto identifikátoru se provede dotaz do databáze pomocí personRepository.findById(buyerId), aby se získala instance PersonEntity kupce. Pokud kupce není nalezen, metoda orElseThrow() vyvolá výjimku.
-         *
-         * Nastavení kupce v objektu faktury: Nyní, když je kupce nalezen, je tento objekt PersonEntity nastaven jako kupce v entitě InvoiceEntity pomocí entity.setBuyer(buyer).
-         *
-         * Uložení faktury do databáze: Entita InvoiceEntity, která nyní obsahuje správného kupce, je uložena do databáze pomocí invoiceRepository.save(entity). Tím se provede vytvoření nové faktury v databázi nebo aktualizace stávající faktury, pokud už existuje.
-         *
-         * Převod na DTO: Nakonec je uložená faktura znovu převedena zpět na InvoiceDTO pomocí mapperu invoiceMapper.toDTO(entity). Tím se vytvoří instance InvoiceDTO, která obsahuje aktualizované nebo nově vytvořené údaje faktury.
-         */
     }
+    /*
+    Vstupní parametr určuje Id faktury, která má být odstraněna.
+    Metoda volá metodu fetchInvoiceById, které získá entitu z databáze pomocí Id faktury.
+    Nalezenou fakturu odstraní z databáze.
+    Vytváří HTTP odpověď 204 (dle api dokumentace)
+     */
     @Override
     public ResponseEntity<Void> removeInvoice(long invoiceId) {
             InvoiceEntity entity = fetchInvoiceById(invoiceId);
             invoiceRepository.delete(entity);
             return ResponseEntity.noContent().build();
-        /**
-         * Metoda slouží k odstranění faktury podle zadaného identifikátoru.
-         *
-         * @param invoiceId Identifikátor faktury, která má být odstraněna
-         * @return ResponseEntity s odpovídajícím stavovým kódem a tělem odpovědi
-         */
     }
 
+    /*
+    Parametr určuje filtrovací podmínky zadané uživatelem.
+    Vytváří specifikaci pomocí zadaných filtrů.
+    Vyhledá všechny filtrované faktury pomocí metody findAll
+    Vrací seznam faktur ve formátu DTO
+     */
     @Override
     public List<InvoiceDTO> getAll(InvoiceFilter invoiceFilter) {
         InvoiceSpecification invoiceSpecification = new InvoiceSpecification(invoiceFilter);
@@ -74,25 +74,35 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .stream()
                 .map(i -> invoiceMapper.toDTO(i))
                 .collect(Collectors.toList());
-        /**
-         * Metoda slouží k získání seznamu faktur podle zadaných filtračních kritérií.
-         *
-         * @param invoiceFilter Filtrační kritéria pro výběr faktur
-         * @return Seznam faktur odpovídající zadaným kritériím, převedený na DTO objekty
-         */
     }
 
+    /*
+    Vstupní parametr určuje Id faktury, které má být zobrazena.
+    Metoda volá metodu fetchInvoiceById, které získá entitu z databáze pomocí Id faktury.
+    Nalezenou fakturu vrací ve formátu DTO.
+     */
     @Override
     public InvoiceDTO getInvoiceById(long invoiceId) {
         InvoiceEntity invoiceEntity = fetchInvoiceById(invoiceId);
         return invoiceMapper.toDTO(invoiceEntity);
     }
 
+    /*
+    Vstupní parametr určuje id faktury, která má být nalezena.
+    Vrací Fakturu s daným Id, když faktura neexistuje vrací výjimku s chybovou hláškou.
+     */
     private InvoiceEntity fetchInvoiceById(long id) {
         return invoiceRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Invoice with id " + id + " wasn't found in the database."));
     }
 
+    /*
+    Vstupními parametry jsou Id faktury, která má být upravena a nová data pro úpravu ve formátu DTO.
+    Metoda volá metodu fetchInvoiceById, které získá entitu z databáze pomocí Id faktury.
+    Přepíše hodnotu Id faktury na Id, která byla zadána v DTO.
+    Buyer a seller jsou nalezeni díky jejich id a aktualizování pomocí .setSeller / .setBuyer
+    Nová data jsou uložena do entity faktury a převedena na DTO.
+     */
     @Override
     public InvoiceDTO editInvoice(Long invoiceId, InvoiceDTO invoiceDTO) {
         InvoiceEntity invoiceEntity = fetchInvoiceById(invoiceId);
@@ -101,22 +111,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceEntity.setSeller(personRepository.findById(invoiceDTO.getSeller().getId()).orElseThrow());
         invoiceEntity.setBuyer(personServiceImpl.fetchPersonById(invoiceDTO.getBuyer().getId()));
 
-
         invoiceMapper.updateInvoiceEntity(invoiceDTO, invoiceEntity);
 
         invoiceRepository.save(invoiceEntity);
         return invoiceMapper.toDTO(invoiceEntity);
 
-        /**
-         * Metoda slouží k úpravě existující faktury na základě zadaného ID faktury a nových údajů o faktuře.
-         *
-         * @param invoiceId    ID faktury, která má být upravena
-         * @param invoiceDTO   Nové údaje o faktuře ve formátu DTO (Data Transfer Object)
-         * @return             DTO reprezentace upravené faktury
-         * @throws NotFoundException Pokud nebyla nalezena faktura s daným ID
-         */
     }
-
     @Override
     public InvoiceStatisticDTO getInvoiceStatistics() {
         return invoiceRepository.getInvoiceStatistics();

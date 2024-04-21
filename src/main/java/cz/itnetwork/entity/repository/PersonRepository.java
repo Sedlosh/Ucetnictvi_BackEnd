@@ -32,10 +32,8 @@ import java.util.Optional;
 
 @Repository
 public interface PersonRepository extends JpaRepository<PersonEntity, Long> {
-    List<PersonEntity> findByHidden(boolean hidden);
-
-// Hibernate vygeneruje dotaz kterej pak shání seznam podle identificationNumber
-    Optional<PersonEntity> findByIdentificationNumber(String identificationNumber);
+    List<PersonEntity> findByHidden(boolean hidden); /* Metoda pro nalezení všech osob, ktreré jsou v databázi nastaveny jako skryté. */
+    Optional<PersonEntity> findByIdentificationNumber(String identificationNumber); /* Metoda pro nalezení osoby podle identifikačního čísla. */
 
     @Query(value = """
             SELECT new cz.itnetwork.dto.PersonStatisticDTO(

@@ -42,16 +42,19 @@ public class PersonServiceImpl implements PersonService {
 
     @Autowired
     private PersonMapper personMapper;
-
     @Autowired
     private PersonRepository personRepository;
     @Autowired
     private InvoiceRepository invoiceRepository;
-
     @Autowired
     private InvoiceMapper invoiceMapper;
 
 
+    /*
+   Vstupní data ve formátu DTO se převedou na entitu osoby.
+   Data uloží do entity.
+   Převede entitu na DTO.
+    */
     public PersonDTO addPerson(PersonDTO personDTO) {
         PersonEntity entity = personMapper.toEntity(personDTO);
         entity = personRepository.save(entity);
@@ -59,6 +62,11 @@ public class PersonServiceImpl implements PersonService {
         return personMapper.toDTO(entity);
     }
 
+    /*
+    Vstupní parametr určuje Id osoby, která má být odstraněna.
+    Metoda volá metodu fetchPersonById, které získá entitu z databáze pomocí Id osoby.
+    Nalezenou osobu uloží a změní jí aktivní stav v databázi.
+    */
     @Override
     public void removePerson(long personId) {
         try {
@@ -67,10 +75,13 @@ public class PersonServiceImpl implements PersonService {
 
             personRepository.save(person);
         } catch (NotFoundException ignored) {
-            // The contract in the interface states, that no exception is thrown, if the entity is not found.
+
         }
     }
-
+    /*
+    Vrací seznam všech osob, které mají aktivní status.
+    Vrací se ve formátu DTO.
+    */
     @Override
     public List<PersonDTO> getAll() {
         return personRepository.findByHidden(false)
@@ -79,6 +90,11 @@ public class PersonServiceImpl implements PersonService {
                 .collect(Collectors.toList());
     }
 
+    /*
+    Vstupní parametr určuje Id osoby, které má být zobrazena.
+    Metoda volá metodu fetchPersonById, které získá entitu z databáze pomocí Id osoby.
+    Nalezenou osobu vrací ve formátu DTO.
+     */
     @Override
     public PersonDTO getPersonById(long personId) {
        PersonEntity personEntity = fetchPersonById(personId);
@@ -86,23 +102,20 @@ public class PersonServiceImpl implements PersonService {
         return personMapper.toDTO(personEntity);
     }
 
-
-
-    // region: Private methods
-    /**
-     * <p>Attempts to fetch a person.</p>
-     * <p>In case a person with the passed [id] doesn't exist a [{@link org.webjars.NotFoundException}] is thrown.</p>
-     *
-     * @param id Person to fetch
-     * @return Fetched entity
-     * @throws org.webjars.NotFoundException In case a person with the passed [id] isn't found
-     */
+    /*
+    Vstupní parametr určuje id osoby, která má být nalezena.
+    Vrací osobu s daným id, když osoba neexistuje vrací výjimku s chybovou hláškou.
+    */
     public PersonEntity fetchPersonById(long id) {
         return personRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Person with id " + id + " wasn't found in the database."));
     }
-    // endregion
 
+     /*
+     Vstupními parametry jsou Id osoby, která má být upravena a nová data pro úpravu ve formátu DTO.
+     Metoda volá metodu fetchPersonById, které získá entitu z databáze pomocí Id osoby.
+     Nastaví původní osobě neaktivní status a vytvoří nový objekt osoby za pomoci addPerson.
+     */
     @Override
      public PersonDTO editPerson(long personId, PersonDTO personDTO) {
         PersonEntity person = fetchPersonById(personId);
@@ -112,19 +125,24 @@ public class PersonServiceImpl implements PersonService {
 
     }
 
-
+    /*
+    Vstupní parametr určuje identifikační číslo osoby, jejíž entitu hledáme.
+    Najde entitu s odpovídajícím id a z té potom vytvoří seznam všech faktur, kde vystupuje jako Seller.
+    Výstupem je formát DTO.
+    */
     public List<InvoiceDTO> getSalesByIdentificationNumber(String identificationNumber) {
-        // Najde osobu podle IČ
         PersonEntity personEntity = personRepository.findByIdentificationNumber(identificationNumber).orElseThrow();
-        // Najde seznam všech faktur, které byly vystaveny touto osobou
         List<InvoiceEntity> sales = invoiceRepository.findBySeller(personEntity);
-        // Převede entitu faktury na DTO a vrátíme seznam faktur
         return sales.stream()
                 .map(invoiceMapper::toDTO)
                 .collect(Collectors.toList());
 
     }
-
+    /*
+    Vstupní parametr určuje identifikační číslo osoby, jejíž entitu hledáme.
+    Najde entitu s odpovídajícím id a z té potom vytvoří seznam všech faktur, kde vystupuje jako Buyer.
+    Výstupem je formát DTO.
+    */
     public List<InvoiceDTO> getPurchasesByIdentificationNumber(String identificationNumber){
         PersonEntity personEntity = personRepository.findByIdentificationNumber(identificationNumber).orElseThrow();
         List<InvoiceEntity> purchases = invoiceRepository.findByBuyer(personEntity);

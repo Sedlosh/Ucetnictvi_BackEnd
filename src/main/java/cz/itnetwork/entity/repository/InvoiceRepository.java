@@ -13,8 +13,8 @@ import java.util.List;
 
 @Repository
 public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, JpaSpecificationExecutor<InvoiceEntity> {
-    List<InvoiceEntity> findBySeller(PersonEntity seller);
-    List<InvoiceEntity> findByBuyer(PersonEntity buyer);
+    List<InvoiceEntity> findBySeller(PersonEntity seller); /* Metoda k nalezení seznamu faktur podle prodejce. */
+    List<InvoiceEntity> findByBuyer(PersonEntity buyer); /* Metoda k nalezení seznamu faktur podle kupce. */
 
     @Query(value = """
             SELECT new cz.itnetwork.dto.InvoiceStatisticDTO(

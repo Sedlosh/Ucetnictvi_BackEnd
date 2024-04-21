@@ -8,38 +8,14 @@ import java.util.List;
 
 public interface PersonService {
 
-    /**
-     * Creates a new person
-     *
-     * @param personDTO Person to create
-     * @return newly created person
-     */
-    PersonDTO addPerson(PersonDTO personDTO);
-
-    /**
-     * <p>Sets hidden flag to true for the person with the matching [id]</p>
-     * <p>In case a person with the passed [id] isn't found, the method <b>silently fails</b></p>
-     *
-     * @param id Person to delete
-     */
-    void removePerson(long id);
-
-    /**
-     * Fetches all non-hidden persons
-     *
-     * @return List of all non-hidden persons
-     */
-    List<PersonDTO> getAll();
-
-    PersonDTO getPersonById(long id);
-
-    PersonDTO editPerson(long id, PersonDTO personDTO);
-
-    List<InvoiceDTO> getSalesByIdentificationNumber(String identificationNumber);
-
-    List<InvoiceDTO> getPurchasesByIdentificationNumber(String identificationNumber);
-
-    List<PersonStatisticDTO> getPersonStatistics();
+    PersonDTO addPerson(PersonDTO personDTO); /* Přidá novou osobu */
+    void removePerson(long id); /* Odstraní existující osobu podle zadaného id */
+    List<PersonDTO> getAll(); /* Vrací seznam všech osob ve formátu DTO */
+    PersonDTO getPersonById(long id); /* Vrací osobu podle zadaného id */
+    PersonDTO editPerson(long id, PersonDTO personDTO); /* Upravuje existující osobu podle zadaného id novými daty, které přijdou jako DTO */
+    List<InvoiceDTO> getSalesByIdentificationNumber(String identificationNumber); /* Vrací seznam všech vystavných faktur podle id osoby ve formátu DTO */
+    List<InvoiceDTO> getPurchasesByIdentificationNumber(String identificationNumber); /* Vrací seznam všech přijatých faktur podle id osoby ve formátu DTO */
+    List<PersonStatisticDTO> getPersonStatistics(); /* Vrací seznam statistik k jedntlivým osobám ve formátu DTO */
 
 
 

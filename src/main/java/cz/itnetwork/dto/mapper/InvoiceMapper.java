@@ -10,8 +10,8 @@ import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface InvoiceMapper {
-    InvoiceEntity toEntity(InvoiceDTO source);
-    InvoiceDTO toDTO(InvoiceEntity source);
+    InvoiceEntity toEntity(InvoiceDTO source); /* Slouží k převodu InvoiceDTO na InvoiceEntity. */
+    InvoiceDTO toDTO(InvoiceEntity source); /* Slouží k převodu InvoiceEntity na InvoiceDTO. */
 
     @Mappings({
             @Mapping (target = "seller", ignore=true),
