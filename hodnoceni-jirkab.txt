@@ -1,0 +1,7 @@
+Ceníme práci na projektu! 🏆 Prohlédli jsme si kód a máme k němu následující poznámky:
+
+Práce do kurzu PRO jsou hodnoceny na společném Code Review, zde jen rychlý komentář:
+- myslete vždy na konzistenci - v DTO či entitách, používáte primitivní datové typy (int, long) nebo objektové (Integer, Long)? A všude stejně?
+- kdykoli posílám nějaká data k uživateli, měl bych na to mít přepravku (DTO)
+- snažte se sjednotit chování, které se sjednotit dá, a zjednodušit tak codebase i správu. Co třeba příslušné kontrollery rovnou mapovat nikoli na "/api", ale na "/api/persons" a "/api/invoices", čímž si zjednodušíte zápis uvnitř a ujasníte odpovědnosti?
+- zvažte, co do repository patří, resp. co do ní nepatří - například generované soubory ve složce target.
